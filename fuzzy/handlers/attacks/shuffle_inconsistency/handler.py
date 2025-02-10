@@ -27,6 +27,7 @@ class ShuffleAttackHandlerExtraParams(BaseModel):
     preserve_first_last: bool = Field(True, description="Whether to preserve first and last words")
     word_groups: List[List[int]] = Field(default_factory=list, 
                                        description="Groups of word indices that should stay together")
+    truncate_cot: bool = Field(True, description="Whether to truncate chain of thought reasoning")
 
 @attack_handler_fm.flavor(FuzzerAttackMode.SHUFFLE_INCONSISTENCY)
 class ShuffleInconsistencyAttackHandler(BaseAttackTechniqueHandler[ShuffleAttackHandlerExtraParams]):
@@ -35,7 +36,7 @@ class ShuffleInconsistencyAttackHandler(BaseAttackTechniqueHandler[ShuffleAttack
     """
     def __init__(self, **extra: Any):
         super().__init__(**extra)
-        self.harm_classifier = HarmfulScoreLLMClassifier()
+        self.harm_classifier = HarmfulScoreLLMClassifier(truncate_cot=self._extra_args.truncate_cot)
         self._best_attempt: Optional[ShuffleAttempt] = None
 
     def _tokenize(self, text: str) -> List[str]:
