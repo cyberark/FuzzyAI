@@ -1,0 +1,10 @@
+POST /v1/chat/completions HTTP/1.1
+Host: 127.0.0.1
+Content-Type: application/json
+
+{
+    "model": "deepseek-r1-distill-qwen-7b",
+    "messages": [
+      { "role": "user", "content": "<PROMPT>" }
+    ]
+}

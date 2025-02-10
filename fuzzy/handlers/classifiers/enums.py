@@ -8,6 +8,7 @@ class Classifier(str, Enum):
     DISAPPROVAL = "dis"
     GENERIC_LLM = "gen"
     HARMFUL_LLM = "har"
+    HARM_SCORE_LLM = "sco"
     OPENAI_MODERATION = "oai"
     AWS_GUARDRAILS = "agr"
     AWS_BEDROCK = "bed"

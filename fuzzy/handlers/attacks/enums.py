@@ -20,3 +20,4 @@ class FuzzerAttackMode(str, Enum):
     ACTOR = "act"
     BON = "bon"
     ASCIISMUGGLING = "asc"
+    SHUFFLE_INCONSISTENCY = "shu"

@@ -13,6 +13,7 @@ from .manyshot.handler import ManyShotAttackHandler
 from .paraphraser.handler import PresuasiveParaphraser
 from .piglatin.handler import PigLatinAttackHandler
 from .please.handler import PleaseAttackHandler
+from .shuffle_inconsistency.handler import ShuffleInconsistencyAttackHandler
 from .taxonomy.handler import TaxonomyParaphraser
 from .thought_experiment.handler import ThoughtExperimentAttackHandler
 from .word_game.handler import WordGameAttackHandler

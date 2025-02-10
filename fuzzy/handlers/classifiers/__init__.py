@@ -6,6 +6,7 @@ from .cosine_similarity.handler import CosineSimilarityClassifier
 from .disapproval.handler import DisapprovalClassifier
 from .generic_llm.handler import LLMEvaluatorClassifier
 from .harmful_llm.handler import HarmfulLLMClassifier
+from .harmful_score_llm.handler import HarmfulScoreLLMClassifier, HarmScore
 from .llm_response_sentiment.handler import LLMResponseSentimentClassifier
 from .obvious_negative.handler import ObviousNegativeClassifier
 from .openai_moderation.handler import OpenAIModerationClassifier
