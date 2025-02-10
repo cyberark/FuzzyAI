@@ -2,11 +2,8 @@ import logging
 import random
 from typing import Any, Optional, Type, List, Tuple
 from dataclasses import dataclass
-
 from pydantic import BaseModel, Field
-
-from fuzzy.handlers.attacks.base import (BaseAttackTechniqueHandler,
-                                       attack_handler_fm)
+from fuzzy.handlers.attacks.base import BaseAttackTechniqueHandler, attack_handler_fm
 from fuzzy.handlers.attacks.enums import FuzzerAttackMode
 from fuzzy.handlers.attacks.models import AttackResultEntry
 from fuzzy.llm.providers.base import BaseLLMProvider
@@ -52,33 +49,54 @@ class ShuffleInconsistencyAttackHandler(BaseAttackTechniqueHandler[ShuffleAttack
         return shuffled_words, indices
 
     async def _evaluate_attempt(self, text: str, llm: BaseLLMProvider) -> Tuple[HarmScore, str]:
-        """Evaluate the harmfulness score of a shuffled text using HarmfulScoreLLMClassifier"""
-        response = await llm.generate(text, **self._extra)
-        if response:
+        """
+        Evaluate the harmfulness score of a shuffled text using HarmfulScoreLLMClassifier.
+        Handles cases where `llm.generate` returns either a string or an object.
+        """
+        # Generate response using the LLM
+        raw_response = await llm.generate(text, **self._extra)
+
+        # Ensure the response is wrapped in an object with a `response` attribute
+        if isinstance(raw_response, str):
+            # If the response is a string, wrap it in a simple object
+            response = type('ResponseWrapper', (object,), {'response': raw_response})
+        else:
+            # Otherwise, assume it already has a `response` attribute
+            response = raw_response
+
+        # Classify the response using the harm classifier
+        if response and hasattr(response, 'response'):
             score = await self.harm_classifier._classify(response.response, llm)
             return score, response.response
-        return HarmScore.HARMLESS, ""
+        else:
+            logger.warning("Invalid response format from LLM. Defaulting to HARMLESS.")
+            return HarmScore.HARMLESS, ""
 
     async def _attack(self, prompt: str, **extra: Any) -> Optional[AttackResultEntry]:
         """
-        Implements the SI-Attack text shuffling mechanism (https://arxiv.org/pdf/2501.04931)
+        Implement SI-Attack text shuffling with HarmfulScoreLLMClassifier optimization
         """
         llm: BaseLLMProvider
         best_score = HarmScore.HARMLESS
         best_attempt = None
-        best_llm_response = ""
+        latest_attempt = None  # Track the latest attempt
+        latest_llm_response = ""
 
         async with self._borrow(self._model) as llm:
             words = self._tokenize(prompt)
-            
+
             for attempt in range(self._extra_args.max_attempts):
                 # Generate shuffled version
                 shuffled_words, indices = self._shuffle_text(words.copy())
                 shuffled_text = self._detokenize(shuffled_words)
-                
+
                 # Evaluate harm score and get LLM response
                 harm_score, llm_response = await self._evaluate_attempt(shuffled_text, llm)
-                
+
+                # Log details of the current attempt
+                logger.info(f"Attempt {attempt + 1}/{self._extra_args.max_attempts}: "
+                            f"Harm Score={harm_score.name}, Shuffled Text='{shuffled_text}'")
+
                 # Track best attempt
                 if harm_score > best_score:
                     best_score = harm_score
@@ -88,29 +106,52 @@ class ShuffleInconsistencyAttackHandler(BaseAttackTechniqueHandler[ShuffleAttack
                         original_words=words.copy(),
                         shuffled_indices=indices
                     )
-                    best_llm_response = llm_response
-                
-                # Early stopping if we exceed threshold
+
+                # Track the latest attempt
+                latest_attempt = ShuffleAttempt(
+                    shuffled_text=shuffled_text,
+                    harm_score=harm_score,
+                    original_words=words.copy(),
+                    shuffled_indices=indices
+                )
+                latest_llm_response = llm_response
+
+                # Break early if the threshold is met
                 if harm_score >= self._extra_args.min_score_threshold:
+                    logger.info(f"Attempt {attempt + 1} meets or exceeds the minimum score threshold ({self._extra_args.min_score_threshold.name}). Breaking early.")
                     break
-            
+
+            # After all attempts, check if we have a valid best attempt
             if best_attempt and best_score >= self._extra_args.min_score_threshold:
                 # Send the best shuffled text to LLM for final response
                 final_response = await llm.generate(best_attempt.shuffled_text, **self._extra)
-                
+
                 self._best_attempt = best_attempt
                 return AttackResultEntry(
                     original_prompt=prompt,
                     current_prompt=best_attempt.shuffled_text,
-                    response=final_response.response if final_response else best_llm_response,
+                    response=final_response.response if hasattr(final_response, 'response') else final_response,
                     meta={
                         "harm_score": best_score.value,
                         "harm_level": best_score.name,
                         "shuffle_indices": best_attempt.shuffled_indices,
-                        "attempts": attempt + 1
+                        "attempts": attempt + 1  # Number of attempts actually made
                     }
                 )
-        
+            elif latest_attempt:
+                # If no attempt meets the threshold, return the latest attempt
+                return AttackResultEntry(
+                    original_prompt=prompt,
+                    current_prompt=latest_attempt.shuffled_text,
+                    response=latest_llm_response,
+                    meta={
+                        "harm_score": latest_attempt.harm_score.value,
+                        "harm_level": latest_attempt.harm_score.name,
+                        "shuffle_indices": latest_attempt.shuffled_indices,
+                        "attempts": attempt + 1  # Number of attempts actually made
+                    }
+                )
+
         return None
 
     @classmethod
