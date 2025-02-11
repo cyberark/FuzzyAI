@@ -21,6 +21,9 @@ class HarmfulLLMClassifier(BaseClassifier):
         self._not_harmful = rvalues[0]
         self._harmful = rvalues[1]
 
+    def is_jailbreak(self, value: Any) -> bool:
+        return bool(value == self._harmful)
+    
     async def _classify(self, text: str, llm: BaseLLMProvider, **extra: Any) -> Any:
         logger.debug(f"Classifier <{self._name}> classifying text: {text}")
         if any(text.lower().startswith(x) for x in OBVIOUS_NOT_HARMFUL) and len(text.split('\n')) == 1:

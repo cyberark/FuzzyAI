@@ -2,10 +2,14 @@ import abc
 import inspect
 import logging
 from functools import wraps
-from typing import Any, Type
+from typing import Any, Type, TypeVar
 
+from fuzzy.handlers.classifiers.enums import Classifier
 from fuzzy.handlers.classifiers.utils import remove_cot, replace_nth
-from fuzzy.utils.flavor_manager import FlavorManager
+from fuzzy.utils.flavor_manager import FlavorManager, TypedFlavorManager
+
+KeyT = TypeVar('KeyT')
+ValT = TypeVar('ValT')
 
 logger = logging.getLogger(__name__)
 
@@ -29,8 +33,9 @@ class BaseClassifier(abc.ABC):
     """
     Base class for classifiers.
     """
-    def __init__(self, truncate_cot: bool, **extra: Any) -> None:
+    def __init__(self, classifier: Classifier, truncate_cot: bool, **extra: Any) -> None:
         self._name = str()
+        self._classifier_type = classifier
         self._truncate_cot = truncate_cot
 
     """
@@ -50,6 +55,13 @@ class BaseClassifier(abc.ABC):
     @abc.abstractmethod
     def _sync_classify(self, *args: Any, **extra: Any) -> Any: ...
     
+    """
+    In most cases, the classifier will return a boolean value. This method will be used to determine if the value is a jailbreak or not.
+    Override to provide custom logic.
+    """
+    def is_jailbreak(self, value: Any) -> bool:
+        return bool(value)
+
     def _preprocess(self, *args: Any, **extra: Any) -> tuple[tuple[Any, ...], dict[Any, Any]]:
         if not self._truncate_cot:
             return args, extra
@@ -87,5 +99,11 @@ class BaseClassifier(abc.ABC):
         param = method_signature.parameters['llm']
         return bool(param.default == inspect.Parameter.empty)
     
+class ClassifierFlavorManager(TypedFlavorManager[KeyT, ValT]):
+    def __init__(self) -> None:
+        super().__init__()
+
+    def kwargs_type_parameter_name(self) -> str:
+        return "classifier"
     
-classifiers_fm: FlavorManager[str, Type[BaseClassifier]] = FlavorManager()
+classifiers_fm: ClassifierFlavorManager[str, Type[BaseClassifier]] = ClassifierFlavorManager()

@@ -20,7 +20,7 @@ class HarmfulSentimentClassifier(BaseClassifier):
         self._classifier = ZeroShotAnalyzer(
             model_name="facebook/bart-large-mnli", analysis_model_type=HarmfulAnalysis
         )
-    
+
     async def _classify(self, text: str, **extra: Any) -> Any:
         logger.debug(f"Classifier <{self._name}> classifying text: {text}")
 

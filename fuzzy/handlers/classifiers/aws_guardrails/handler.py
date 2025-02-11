@@ -40,11 +40,12 @@ class AWSGuardrailsClassifier(BaseClassifier):
         self._guardrail_version = guardrail_version
         self._bedrock_runtime = boto3.client("bedrock-runtime")
 
+    def is_jailbreak(self, value: Any) -> bool:
+        result, _, _ = value
+        return bool(result == "GUARDRAIL_INTERVENED")
+    
     def _format_text(self, text: str) -> dict[str, dict[str, str]]:
         return {"text": {"text": text}}
-
-    async def _classify(self, *args: Any, **extra: Any) -> Any:
-        raise NotImplementedError
 
     def _sync_classify(self, text: str, **extra: Any) -> Any:
         source: str = extra.get("source", "INPUT")
@@ -70,3 +71,6 @@ class AWSGuardrailsClassifier(BaseClassifier):
             return action, outputs, assessments
         except Exception as e:
             logger.error(f"An error occurred: {str(e)}")
+
+    async def _classify(self, *args: Any, **extra: Any) -> Any:
+        raise NotImplementedError

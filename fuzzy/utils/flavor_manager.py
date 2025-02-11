@@ -1,4 +1,5 @@
-from typing import Callable, Generic, Optional, TypeVar, Union, cast, overload
+import abc
+from typing import Any, Callable, Generic, Optional, TypeVar, Union, cast, overload
 
 KeyT = TypeVar("KeyT")
 ValT = TypeVar("ValT")
@@ -157,3 +158,39 @@ class FlavorManager(Generic[KeyT, ValT]):
             if val == value:
                 return key
         raise ValueError(f"Value {value} not found in flavors")
+    
+class TypedFlavorManager(FlavorManager[KeyT, ValT]):
+    def __init__(self) -> None:
+        super().__init__()
+
+    @abc.abstractmethod
+    def kwargs_type_parameter_name(self) -> str:
+        ...
+
+    @overload
+    def flavor(self, flavor: KeyT) -> Callable[[T], T]:
+        ...
+
+    @overload
+    def flavor(self, flavor: KeyT, value: ValT) -> None:
+        ...
+
+    def flavor(self, flavor: KeyT, value: Optional[ValT] = None) -> Optional[Callable[[T], T]]:
+        if value is not None:
+            return super().flavor(flavor, value)
+
+        fm_super = super()
+        kwargs_type_parameter_name = self.kwargs_type_parameter_name()
+
+        def decorator(cls: T) -> T:
+            original_init = cls.__init__ # type: ignore
+
+            def new_init(self, *args: Any, **kwargs: Any) -> None: # type: ignore
+                kwargs[kwargs_type_parameter_name] = flavor
+                original_init(self, *args, **kwargs)
+
+            cls.__init__ = new_init  # type: ignore
+            return fm_super.flavor(flavor)(cls) # type: ignore
+
+        return decorator
+    

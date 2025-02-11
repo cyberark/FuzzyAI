@@ -20,6 +20,10 @@ class DisapprovalClassifier(BaseClassifier):
         self._threshold = threshold
         self._classifier = ZeroShotAnalyzer(model_name="facebook/bart-large-mnli", analysis_model_type=DisapprovalAnalysis)
 
+    def is_jailbreak(self, value: Any) -> bool:
+        clf_result, _ = value
+        return bool(clf_result)
+    
     def _sync_classify(self, *args: Any, **extra: Any) -> Any:
         text = args[0]
         logger.debug(f"Classifier <{self._name}> classifying text: {text}")

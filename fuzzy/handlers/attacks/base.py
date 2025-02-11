@@ -12,12 +12,11 @@ from pydantic import BaseModel
 from pydantic_core import PydanticUndefinedType, ValidationError
 from tqdm import tqdm
 
-from fuzzy.handlers.attacks.proto import (AttackResultEntry, AttackSummary,
-                                          BaseAttackTechniqueHandlerProto)
+from fuzzy.handlers.attacks.proto import AttackResultEntry, AttackSummary, BaseAttackTechniqueHandlerProto
 from fuzzy.handlers.classifiers.base import BaseClassifier
+from fuzzy.handlers.classifiers.enums import Classifier
 from fuzzy.handlers.db.adv_prompts import AdversarialPromptDTO
-from fuzzy.handlers.response_refinement_handler import (
-    RefinementException, ResponseRefinementHandler)
+from fuzzy.handlers.response_refinement_handler import RefinementException, ResponseRefinementHandler
 from fuzzy.llm.models import BaseLLMProviderResponse
 from fuzzy.llm.providers.base import BaseLLMProvider
 from fuzzy.utils.flavor_manager import FlavorManager
@@ -258,7 +257,10 @@ class BaseAttackTechniqueHandler(BaseAttackTechniqueHandlerProto, Generic[T]):
     
     async def _classify(self, classifier: BaseClassifier, llm_response: BaseLLMProviderResponse, llm: BaseLLMProvider, **extra: Any) -> dict[str, int]:
         classifier_result = await classifier.classify(text=llm_response.response, llm=llm, **extra)
-        return {classifier.name: 1 if classifier_result else 0}
+        return {classifier.name: 1 if classifier.is_jailbreak(classifier_result) else 0}
+    
+    def _get_classifier(self, classifier_type: Classifier) -> Optional[BaseClassifier]:
+        return next((classifier for classifier in self._classifiers if classifier._classifier_type == classifier_type), None)
     
     """
     Borrow a provider from the queue for a specific model.
@@ -363,6 +365,7 @@ class BaseAttackTechniqueHandler(BaseAttackTechniqueHandlerProto, Generic[T]):
     
     def _verify_supported_models(self) -> None:
         ...
+
     def _verify_supported_classifiers(self) -> None:
         ...
     

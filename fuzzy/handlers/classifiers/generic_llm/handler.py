@@ -31,6 +31,9 @@ class LLMEvaluatorClassifier(BaseClassifier):
         self._negative = rvalues[0]
         self._positive = rvalues[1]
 
+    def is_jailbreak(self, value: Any) -> bool:
+        return bool(value == self._positive)
+    
     async def _classify(self, text: str, llm: BaseLLMProvider, **extra: Any) -> Any:
         logger.debug(f"Classifier <{self._name}> classifying text: {text}")
         full_prompt = self._prompt.format(input=text)

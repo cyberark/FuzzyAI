@@ -4,13 +4,11 @@ import os
 from typing import Any, Callable, Coroutine, Optional, Union
 
 import aiohttp
-from jsonpath_ng import parse
 import requests
+from jsonpath_ng import parse
 
 from fuzzy.llm.models import BaseLLMProviderResponse
-from fuzzy.llm.providers.base import (BaseLLMMessage, BaseLLMProvider,
-                                      BaseLLMProviderException,
-                                      llm_provider_fm)
+from fuzzy.llm.providers.base import BaseLLMMessage, BaseLLMProvider, BaseLLMProviderException, llm_provider_fm
 from fuzzy.llm.providers.enums import LLMProvider
 from fuzzy.llm.providers.rest.utils import parse_http_request
 
@@ -196,6 +194,6 @@ class RestProvider(BaseLLMProvider):
     async def chat(self, messages: list[BaseLLMMessage], **extra: Any) -> BaseLLMProviderResponse | None:
         raise Exception("Chat is not supported for REST providers.")
     
-    async def sync_chat(self, messages, **extra) -> None:
+    def sync_chat(self, messages: list[BaseLLMMessage], **extra: Any) -> BaseLLMProviderResponse | None:
         raise Exception("Chat is not supported for REST providers.")
     

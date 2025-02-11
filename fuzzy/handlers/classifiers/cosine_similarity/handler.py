@@ -4,8 +4,7 @@ from typing import Any
 
 from fuzzy.handlers.classifiers.base import BaseClassifier, classifiers_fm
 from fuzzy.handlers.classifiers.enums import Classifier
-from fuzzy.handlers.sentence_similarity_analyzer import (
-    CosineSimilarityAnalysis, SentenceSimilarityAnalyzer)
+from fuzzy.handlers.sentence_similarity_analyzer import CosineSimilarityAnalysis, SentenceSimilarityAnalyzer
 
 logger = logging.getLogger(__name__)
 
@@ -26,6 +25,10 @@ class CosineSimilarityClassifier(BaseClassifier):
         # setting the dissimilarity flag to False will return the cosine similarity as is
         self._dissimilarity = dissimilarity
 
+    def is_jailbreak(self, value: Any) -> bool:
+        clf_result, _ = value
+        return bool(clf_result)
+    
     def _sync_classify(self, *args: Any, **extra: Any) -> Any:
         logger.debug(f"Classifier <{self._name}> classifying similarity between: {args}")
 

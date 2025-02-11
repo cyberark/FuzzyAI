@@ -68,9 +68,10 @@ class AWSBedrockClassifier(BaseClassifier):
             "us.anthropic.claude-3-5-sonnet-20241022-v2:0",
         ]
 
-    async def _classify(self, *args: Any, **extra: Any) -> Any:
-        raise NotImplementedError
-
+    def is_jailbreak(self, value: Any) -> bool:
+        output, _, _ = value
+        return bool(output == "Y")
+    
     def _sync_classify(self, text: str, **extra: Any) -> Any:
         logger.debug(f"Classifier <{self._name}> classifying text: {text}")
         max_tokens = extra.get("max_tokens")
@@ -131,3 +132,6 @@ class AWSBedrockClassifier(BaseClassifier):
 
         except Exception as e:
             logger.error(f"An error occurred: {str(e)}")
+
+    async def _classify(self, *args: Any, **extra: Any) -> Any:
+        raise NotImplementedError

@@ -1,12 +1,12 @@
 import abc
-from typing import Any, Callable, Optional, Type, TypeVar, Union, overload
+from typing import Any, Optional, Type, TypeVar, Union
 
 from pydantic import BaseModel
 
 from fuzzy.llm.chain import FuzzChain, FuzzNode
 from fuzzy.llm.models import BaseLLMProviderResponse
 from fuzzy.llm.providers.enums import LLMProvider
-from fuzzy.utils.flavor_manager import FlavorManager
+from fuzzy.utils.flavor_manager import TypedFlavorManager
 
 T = TypeVar('T')
 KeyT = TypeVar('KeyT')
@@ -97,34 +97,11 @@ class BaseLLMProvider(abc.ABC):
     def __str__(self) -> str:
         return f"model: {self._model_name}"
     
-class ProviderFlavorManager(FlavorManager[KeyT, ValT]):
+class ProviderFlavorManager(TypedFlavorManager[KeyT, ValT]):
     def __init__(self) -> None:
         super().__init__()
 
-    @overload
-    def flavor(self, flavor: KeyT) -> Callable[[T], T]:
-        ...
-
-    @overload
-    def flavor(self, flavor: KeyT, value: ValT) -> None:
-        ...
-
-    def flavor(self, flavor: KeyT, value: Optional[ValT] = None) -> Optional[Callable[[T], T]]:
-        if value is not None:
-            return super().flavor(flavor, value)
-
-        fm_super = super()
-
-        def decorator(cls: T) -> T:
-            original_init = cls.__init__ # type: ignore
-
-            def new_init(self, *args: Any, **kwargs: Any) -> None: # type: ignore
-                kwargs['provider'] = flavor
-                original_init(self, *args, **kwargs)
-
-            cls.__init__ = new_init  # type: ignore
-            return fm_super.flavor(flavor)(cls) # type: ignore
-
-        return decorator
+    def kwargs_type_parameter_name(self) -> str:
+        return "provider"
     
 llm_provider_fm: ProviderFlavorManager[str, Type[BaseLLMProvider]] = ProviderFlavorManager()

@@ -1,6 +1,8 @@
 import os
 import subprocess
+
 import streamlit as st
+
 from fuzzy.enums import EnvironmentVariables
 from fuzzy.handlers.attacks.base import attack_handler_fm
 from fuzzy.handlers.attacks.enums import FuzzerAttackMode
@@ -157,7 +159,7 @@ elif st.session_state.step == 3:
             st.rerun()
 
 elif st.session_state.step == 4:
-    st.header("Prompt selection")
+    st.header("Step 4: Prompt selection")
     prompt = st.text_area("Enter prompt")
 
     col1, col2 = st.columns([1,1])
@@ -173,7 +175,7 @@ elif st.session_state.step == 4:
             st.rerun()
 
 elif st.session_state.step == 5:
-    st.header("Step 4: Execution")
+    st.header("Step 5: Execution")
     command = ["python", "run.py", "-d", st.session_state.db_address, "-w", str(st.session_state.max_workers), "-N", str(st.session_state.max_tokens)]
     if st.session_state.verbose:
         command.append("-v")

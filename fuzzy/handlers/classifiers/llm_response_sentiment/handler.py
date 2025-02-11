@@ -4,8 +4,7 @@ from typing import Any
 
 from fuzzy.handlers.classifiers.base import BaseClassifier, classifiers_fm
 from fuzzy.handlers.classifiers.enums import Classifier
-from fuzzy.handlers.text_analyzer import (LLMResponseSentimentAnalysis,
-                                          ZeroShotAnalyzer)
+from fuzzy.handlers.text_analyzer import LLMResponseSentimentAnalysis, ZeroShotAnalyzer
 
 logger = logging.getLogger(__name__)
 
@@ -23,6 +22,10 @@ class LLMResponseSentimentClassifier(BaseClassifier):
         self._classifier = ZeroShotAnalyzer(model_name="facebook/bart-large-mnli", 
                                             analysis_model_type=LLMResponseSentimentAnalysis)
 
+    def is_jailbreak(self, value: Any) -> bool:
+        clf_result, _ = value
+        return bool(clf_result)
+    
     def _sync_classify(self, *args: Any, **extra: Any) -> Any:
         text = args[0]
         logger.debug(f"Classifier <{self._name}> classifying text: {text}")

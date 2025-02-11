@@ -59,6 +59,10 @@ class AzureContentSafetyClassifier(BaseClassifier):
         self._mode = mode
         self._async_content_safety_session = aiohttp.ClientSession(headers=self._headers)
 
+    def is_jailbreak(self, value: Any) -> bool:
+        result, _ = value
+        return result == "Y"
+    
     def _get_azure_content_safety_url(self, action: str, version: str = "2024-02-15-preview") -> str:
         return f"{self._content_safety_endpoint}/contentsafety/text:{action}?api-version={version}"
 
