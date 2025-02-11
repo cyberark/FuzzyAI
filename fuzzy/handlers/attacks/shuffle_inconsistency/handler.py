@@ -21,7 +21,6 @@ class ShuffleAttempt:
 class ShuffleAttackHandlerExtraParams(BaseModel):
     max_attempts: int = Field(10, description="Maximum number of shuffle attempts")
     min_score_threshold: HarmScore = Field(HarmScore.HARMFUL, description="Minimum harm score to consider attack successful")
-    truncate_cot: bool = Field(True, description="Whether to truncate chain of thought reasoning")
 
 @attack_handler_fm.flavor(FuzzerAttackMode.SHUFFLE_INCONSISTENCY)
 class ShuffleInconsistencyAttackHandler(BaseAttackTechniqueHandler[ShuffleAttackHandlerExtraParams]):
@@ -30,8 +29,18 @@ class ShuffleInconsistencyAttackHandler(BaseAttackTechniqueHandler[ShuffleAttack
     """
     def __init__(self, **extra: Any):
         super().__init__(**extra)
-        self.harm_classifier = HarmfulScoreLLMClassifier(truncate_cot=self._extra_args.truncate_cot)
         self._best_attempt: Optional[ShuffleAttempt] = None
+
+    def _verify_supported_classifiers(self) -> None:
+        supported_classifiers = (HarmfulScoreLLMClassifier)
+        if not self._classifiers:
+            raise ValueError("No classifiers found, you must provide the \"HarmfulScoreLLMClassifier\" 'sco' classifier for this attack mode")
+
+        for classifier in self._classifiers:
+            if not isinstance(classifier, supported_classifiers):
+                raise ValueError(
+                    f"Shuffle Inconsistency attack mode supported classifiers are: {supported_classifiers}. {classifier.name} is not supported."
+                )
 
     def _tokenize(self, text: str) -> List[str]:
         """Split text into words while preserving punctuation"""
@@ -66,7 +75,7 @@ class ShuffleInconsistencyAttackHandler(BaseAttackTechniqueHandler[ShuffleAttack
 
         # Classify the response using the harm classifier
         if response and hasattr(response, 'response'):
-            score = await self.harm_classifier._classify(response.response, llm)
+            score = await self._classifiers[0]._classify(response.response, llm)
             return score, response.response
         else:
             logger.warning("Invalid response format from LLM. Defaulting to HARMLESS.")
