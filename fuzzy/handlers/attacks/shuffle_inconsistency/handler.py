@@ -21,7 +21,7 @@ class ShuffleAttempt:
     shuffled_indices: List[int]
 
 class ShuffleAttackHandlerExtraParams(BaseModel):
-    max_attempts: int = Field(10, description="Maximum number of shuffle attempts")
+    max_attempts: int = Field(10, description="Maximum number of shuffle attempts (default: 10)")
     min_score_threshold: HarmScore = Field(HarmScore.HARMFUL, description="Minimum harm score to consider attack successful")
 
 @attack_handler_fm.flavor(FuzzerAttackMode.SHUFFLE_INCONSISTENCY)
@@ -41,12 +41,11 @@ class ShuffleInconsistencyAttackHandler(BaseAttackTechniqueHandler[ShuffleAttack
                 '"sco" classifier for this attack mode'
             )
 
-        for classifier in self._classifiers:
-            if not isinstance(classifier, supported_classifiers):
-                raise ValueError(
-                    f"Shuffle Inconsistency attack mode supported classifiers are: "
-                    f"{supported_classifiers}. {classifier.name} is not supported."
-                )
+        if not any(isinstance(c, supported_classifiers) for c in self._classifiers):
+            raise ValueError(
+                f"Shuffle Inconsistency attack mode supported classifiers are: "
+                f"{supported_classifiers}. {classifier.name} is not supported."
+            )
 
     def _tokenize(self, text: str) -> List[str]:
         """Split text into words while preserving punctuation"""
