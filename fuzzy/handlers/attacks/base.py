@@ -242,8 +242,11 @@ class BaseAttackTechniqueHandler(BaseAttackTechniqueHandlerProto, Generic[T]):
         classifications: dict[str, Any] = {}
         
         if self._classifiers:
+            print("la")
             target_model = self._classifier_model or self._model
+            print("li")
             async with self._borrow(target_model) as llm:
+                print("lo")
                 if llm_response.response:
                     tasks = [
                         asyncio.create_task(self._classify(classifier, llm_response, llm, **extra))
@@ -257,6 +260,8 @@ class BaseAttackTechniqueHandler(BaseAttackTechniqueHandlerProto, Generic[T]):
     
     async def _classify(self, classifier: BaseClassifier, llm_response: BaseLLMProviderResponse, llm: BaseLLMProvider, **extra: Any) -> dict[str, int]:
         classifier_result = await classifier.classify(text=llm_response.response, llm=llm, **extra)
+        print("coucou")
+        print(classifier.is_jailbreak(classifier_result))
         return {classifier.name: 1 if classifier.is_jailbreak(classifier_result) else 0}
     
     def _get_classifier(self, classifier_type: Classifier) -> Optional[BaseClassifier]:

@@ -38,9 +38,7 @@ class ShuffleInconsistencyAttackHandler(BaseAttackTechniqueHandler[ShuffleAttack
 
         for classifier in self._classifiers:
             if not isinstance(classifier, supported_classifiers):
-                raise ValueError(
-                    f"Shuffle Inconsistency attack mode supported classifiers are: {supported_classifiers}. {classifier.name} is not supported."
-                )
+                raise ValueError(f"Shuffle Inconsistency attack mode supported classifiers are: {supported_classifiers}. {classifier.name} is not supported.")
 
     def _tokenize(self, text: str) -> List[str]:
         """Split text into words while preserving punctuation"""
@@ -63,19 +61,11 @@ class ShuffleInconsistencyAttackHandler(BaseAttackTechniqueHandler[ShuffleAttack
         Handles cases where `llm.generate` returns either a string or an object.
         """
         # Generate response using the LLM
-        raw_response = await llm.generate(text, **self._extra)
+        response = await llm.generate(text, **self._extra)
 
-        # Ensure the response is wrapped in an object with a `response` attribute
-        if isinstance(raw_response, str):
-            # If the response is a string, wrap it in a simple object
-            response = type('ResponseWrapper', (object,), {'response': raw_response})
-        else:
-            # Otherwise, assume it already has a `response` attribute
-            response = raw_response
-
-        # Classify the response using the harm classifier
+        # Classify the response using the classifier
         if response and hasattr(response, 'response'):
-            score = await self._classifiers[0]._classify(response.response, llm)
+            score = await self._get_classifier("sco")._classify(response.response, llm)
             return score, response.response
         else:
             logger.warning("Invalid response format from LLM. Defaulting to HARMLESS.")
