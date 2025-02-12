@@ -8,6 +8,8 @@ from fuzzy.handlers.attacks.enums import FuzzerAttackMode
 from fuzzy.handlers.attacks.models import AttackResultEntry
 from fuzzy.llm.providers.base import BaseLLMProvider
 from fuzzy.handlers.classifiers import HarmfulScoreLLMClassifier, HarmScore
+from fuzzy.handlers.classifiers.enums import Classifier
+
 
 logger = logging.getLogger(__name__)
 
@@ -65,7 +67,7 @@ class ShuffleInconsistencyAttackHandler(BaseAttackTechniqueHandler[ShuffleAttack
 
         # Classify the response using the classifier
         if response and hasattr(response, 'response'):
-            score = await self._get_classifier("sco")._classify(response.response, llm)
+            score = await self._get_classifier(Classifier.HARM_SCORE_LLM)._classify(response.response, llm)
             return score, response.response
         else:
             logger.warning("Invalid response format from LLM. Defaulting to HARMLESS.")
