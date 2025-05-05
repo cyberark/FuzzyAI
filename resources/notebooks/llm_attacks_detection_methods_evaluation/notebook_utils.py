@@ -1,12 +1,14 @@
-from fuzzy.handlers.classifiers.llm_response_sentiment.handler import LLMResponseSentimentClassifier
-from fuzzy.handlers.text_analyzer import LLMResponseSentimentAnalysis
 from typing import Optional
-import matplotlib.pyplot as plt
+
 import matplotlib.patches as mpatches
-from sklearn.metrics import precision_score, confusion_matrix, recall_score
+import matplotlib.pyplot as plt
 import numpy as np
 import pandas as pd
 import seaborn as sns
+from sklearn.metrics import confusion_matrix, precision_score, recall_score
+
+from fuzzyai.handlers.classifiers.llm_response_sentiment.handler import LLMResponseSentimentClassifier
+from fuzzyai.handlers.text_analyzer import LLMResponseSentimentAnalysis
 
 
 class NotebookUtils:

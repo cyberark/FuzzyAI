@@ -1,6 +1,9 @@
+[tool.setuptools]
+py-modules = ["fuzzyai"]
+
 [tool.poetry]
-name = "fuzzy"
-version = "0.1.0"
+name = "fuzzyai"
+version = "1.0.0"
 description = "FuzzyAI is a Python library for fuzzying LLMs."
 authors = ["CyberArk <cyber@cyberark.com>"]
 readme = "README.md"
@@ -26,6 +29,8 @@ torch = "2.2.2"
 numpy = "1.26.4"
 httpx = "0.27.2"
 python-dotenv = "^1.0.1"
+tornado = "^6.4.2"
+streamlit = "^1.41.1"
 
 [tool.poetry.group.dev.dependencies]
 ipykernel = "^6.29.0"
@@ -38,11 +43,16 @@ requests-mock = "^1.12.1"
 mypy = "^1.13.0"
 pytest = "^8.3.4"
 autoflake = "^2.3.1"
-streamlit = "^1.41.1"
 
 [tool.pytest.ini_options]
 asyncio_mode = "auto"
+pythonpath = [
+  "src/"
+]
+
+[tool.poetry.scripts]
+fuzzyai = "fuzzyai.cli:main"
 
 [build-system]
-requires = ["poetry-core"]
+requires = ["setuptools>=40.9.0", "wheel", "poetry-core>=1.0.0"]
 build-backend = "poetry.core.masonry.api"

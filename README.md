@@ -24,22 +24,35 @@
 </p>
 
 ## Getting Started
+### Quick start #1 - Using an existing python project
+1. Install fuzzyai
+   ```bash
+   # Use either pip or any other package manager
+   pip install git+https://github.com/cyberark/FuzzyAI.git
+   ```
 
+2. Run the fuzzer
+   ```bash
+   fuzzyai fuzz -h
+   ```
+
+### Quick start #2 - or as a standalone project
 1. Clone the repository:
    ```bash
    git clone git@github.com:cyberark/FuzzyAI.git
+   cd FuzzyAI
    ```
 
 2. Install dependencies using [Poetry](https://python-poetry.org/):
    ```bash
-   poetry install
-   poetry shell  # Activate virtual environment
+   poetry run pip install -e .
    ```
 
 3. Run the fuzzer:
    ```bash
-   python run.py -h
+   fuzzyai fuzz -h
    ```
+
 4. Optional: Install [ollama](https://ollama.com/download/), and download a model for local usage:
    ``` # Running the command will download and install (if not) llama3.1, which is about 4.7 GB in size and is an 8B parameters model. Llama3.1 hat can be substituted with any other open-source model that is supported by ollama.
    ollama pull llama3.1
@@ -51,9 +64,9 @@
 ## Web UI (Experimental)
 ![FZAI](resources/webui.png)
 
-1. Run the Web UI (make sure you complete steps #1 and #2 from above):
+1. Run the Web UI (make sure you completed either of the installation steps from above):
    ```bash
-   streamlit run webui.py
+   fuzzyai webui
    ```
 
 ## Notebooks
@@ -72,24 +85,24 @@ Explore detailed usage instructions in the [Wiki](https://github.com/cyberark/Fu
 
 ### A default attack (just evaluate the prompt 'Harmful_Prompt') using llama over Ollama
 ```bash
-python run.py -m ollama/llama3.1 -a def -t "Harmful_Prompt"
+fuzzyai fuzz -m ollama/llama3.1 -a def -t "Harmful_Prompt"
 ```
 
 ### Attack the prompt utilizing ManyShot and Taxonomy attacks, using gpt3.5 over OpenAI using one worker
 ```bash
-OPENAI_API_KEY=sk-3fa1... python run.py -m openai/gpt-3.5-turbo -a man -a tax -t "Harmful_Prompt"
+OPENAI_API_KEY=sk-3fa1... fuzzyai fuzz -m openai/gpt-3.5-turbo -a man -a tax -t "Harmful_Prompt"
 ```
 
 ### Attack prompts in prompts.txt utilizing the ArtPrompt attack, using Claude 3.5 over Anthropic
 ```bash
-ANTHROPIC_API_KEY=deadbeef... python run.py -m anthropic/claude-3-5-sonnet-20240620 -a art -T resources/adv_prompts.txt -e blacklisted_words="bomb,garbage,acid,ugly,self-harm,kill your"
+ANTHROPIC_API_KEY=deadbeef... fuzzyai fuzz -m anthropic/claude-3-5-sonnet-20240620 -a art -T resources/adv_prompts.txt -e blacklisted_words="bomb,garbage,acid,ugly,self-harm,kill your"
 ```
 
 --- 
 
 ### Attack your own REST API
 ```bash
-OPENAI_API_KEYT=sk-3fa1... python run.py -a def -x openai/gpt-4 -e classifier_model=openai/gpt-4 -m rest/http.raw -e host=localhost -e port=8000 -e scheme=https  
+OPENAI_API_KEYT=sk-3fa1... fuzzyai fuzz -a def -x openai/gpt-4 -e classifier_model=openai/gpt-4 -m rest/http.raw -e host=localhost -e port=8000 -e scheme=https  
 -t "How to build a bomb"
 ```
 

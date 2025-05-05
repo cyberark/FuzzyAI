@@ -26,7 +26,8 @@ To start developing and testing using our development scripts, the following too
    cd /tmp
    git clone <your repo>
    cd FuzzyAI//
-   python run.py
+   poetry install -e .
+   fuzzyai fuzz -h
    ```
 
 ## Releases
