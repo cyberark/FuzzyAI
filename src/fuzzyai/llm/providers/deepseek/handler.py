@@ -88,5 +88,8 @@ class DeepSeekProvider(BaseLLMProvider):
         chat_extra_params = {k:v for k, v in extra.items() if k not in [LLMProviderExtraParams.APPEND_LAST_RESPONSE]}
         return self.sync_chat(messages, **chat_extra_params)
 
+    def sync_chat(self, messages: list[BaseLLMMessage], **extra: Any) -> Optional[BaseLLMProviderResponse]:
+        raise NotImplementedError
+    
     async def close(self) -> None:
         await self._session.close()
