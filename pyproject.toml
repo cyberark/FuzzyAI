@@ -15,7 +15,7 @@ motor = "^3.6"
 pydantic = "^2.5.3"
 aiofiles = "^23.2.1"
 aiohttp = {version = "^3.9.1", extras = ["speedups"]}
-transformers = "^4.37.2"
+transformers = "4.51.3"
 sentence-transformers = "^2.6.1"
 fschat = "^0.2.36"
 pygad = "^3.3.1"
