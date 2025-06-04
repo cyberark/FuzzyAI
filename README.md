@@ -50,7 +50,7 @@
 
 3. Run the fuzzer:
    ```bash
-   fuzzyai fuzz -h
+   poetry run fuzzyai fuzz -h
    ```
 
 4. Optional: Install [ollama](https://ollama.com/download/), and download a model for local usage:
@@ -66,7 +66,7 @@
 
 1. Run the Web UI (make sure you completed either of the installation steps from above):
    ```bash
-   fuzzyai webui
+   poetry run fuzzyai webui
    ```
 
 ## Notebooks
