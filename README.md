@@ -82,6 +82,7 @@ We've included some datasets you can use under [resources/](https://github.com/c
 Explore detailed usage instructions in the [Wiki](https://github.com/cyberark/FuzzyAI/wiki).
 
 ## Examples
+If you're using poetry, make sure you've activated the venv (or by prepending 'poetry run' to the command line
 
 ### A default attack (just evaluate the prompt 'Harmful_Prompt') using llama over Ollama
 ```bash
