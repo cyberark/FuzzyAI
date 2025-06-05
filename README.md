@@ -47,6 +47,12 @@
    ```bash
    poetry run pip install -e .
    ```
+   Install dependencies using [conda](https://anaconda.org/anaconda/conda):
+      ```bash
+      conda create -n fuzzyai python=3.11
+      conda activate fuzzyai # Activate virtual environment
+      pip install -r requirements.txt
+      ```
 
 3. Run the fuzzer:
    ```bash
