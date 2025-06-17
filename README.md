@@ -50,7 +50,7 @@
 
 3. Run the fuzzer:
    ```bash
-   fuzzyai fuzz -h
+   poetry run fuzzyai fuzz -h
    ```
 
 4. Optional: Install [ollama](https://ollama.com/download/), and download a model for local usage:
@@ -66,7 +66,7 @@
 
 1. Run the Web UI (make sure you completed either of the installation steps from above):
    ```bash
-   fuzzyai webui
+   poetry run fuzzyai webui
    ```
 
 ## Notebooks
@@ -82,6 +82,7 @@ We've included some datasets you can use under [resources/](https://github.com/c
 Explore detailed usage instructions in the [Wiki](https://github.com/cyberark/FuzzyAI/wiki).
 
 ## Examples
+If you're using poetry, make sure you've activated the venv (or by prepending 'poetry run' to the command line
 
 ### A default attack (just evaluate the prompt 'Harmful_Prompt') using llama over Ollama
 ```bash
