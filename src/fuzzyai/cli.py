@@ -170,7 +170,7 @@ async def run_fuzzer(args: argparse.Namespace) -> None:
         return
 
     if isinstance(args.model, (list, set)) and args.model:
-        model_str = next(iter(args.model))  # Pega o primeiro item
+        model_str = next(iter(args.model))  
     else:
         model_str = str(args.model)
 
