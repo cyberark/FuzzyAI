@@ -1,5 +1,6 @@
 import json
 import logging
+from importlib import resources
 from typing import Any, Optional, Type
 
 from pydantic import BaseModel, Field
@@ -40,7 +41,7 @@ class TaxonomyParaphraser(BaseAttackTechniqueHandler[TaxonomyParaphraserExtraPar
         return TaxonomyParaphraserExtraParams
     
     def _load_taxonomy_dataset(self) -> None:
-        with open('resources/persuasion_taxonomy.jsonl', 'r') as f:
+        with resources.open_text("fuzzyai.resources", "persuasion_taxonomy.jsonl") as f:
             data = f.read()
 
         self._taxonomies = [json.loads(jline) for jline in data.splitlines()]

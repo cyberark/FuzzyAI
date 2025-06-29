@@ -1,7 +1,7 @@
 <p align="center">
    <h1 align="center">FuzzyAI Fuzzer</h1>
    <p align="center">
-      <img src="resources/logo.png" alt="Project Logo" width="200" style="vertical-align:middle; margin-right:10px;" /><br/>
+      <img src="/src/fuzzyai/resources/logo.png" alt="Project Logo" width="200" style="vertical-align:middle; margin-right:10px;" /><br/>
       The FuzzyAI Fuzzer is a powerful tool for automated LLM fuzzing. It is designed to help developers and security researchers identify jailbreaks and mitigate potential security vulnerabilities in their LLM APIs. 
    </p>
 </p>
@@ -19,7 +19,7 @@
       <img alt="Discord" src="https://img.shields.io/discord/1330486843938177157">
    </a>
    <br/><br/>
-   <img alt="fuzzgif" src="/resources/fuzz.gif" />
+   <img alt="fuzzgif" src="/src/fuzzyai/resources/fuzz.gif" />
    <br/>
 </p>
 
@@ -62,7 +62,7 @@
    Alternativly, you can use the Web UI
 
 ## Web UI (Experimental)
-![FZAI](resources/webui.png)
+![FZAI](/src/fuzzyai/resources/webui.png)
 
 1. Run the Web UI (make sure you completed either of the installation steps from above):
    ```bash
@@ -70,12 +70,12 @@
    ```
 
 ## Notebooks
-We've included interactive Jupyter notebooks you can use under [resources/notebooks/](https://github.com/cyberark/FuzzyAI/tree/main/resources/notebooks).  
+We've included interactive Jupyter notebooks you can use under [src/fuzzyai/resources/notebooks/](https://github.com/cyberark/FuzzyAI/tree/main/src/fuzzyai/resources/notebooks).  
 For more information, see [notebooks wiki](https://github.com/cyberark/FuzzyAI/wiki#notebooks).
 
 ## Datasets
 
-We've included some datasets you can use under [resources/](https://github.com/cyberark/FuzzyAI/tree/main/resources). For more information, see [datasets wiki](https://github.com/cyberark/FuzzyAI/wiki#datasets).
+We've included some datasets you can use under [resources/](https://github.com/cyberark/FuzzyAI/tree/main/src/fuzzyau/resources). For more information, see [datasets wiki](https://github.com/cyberark/FuzzyAI/wiki#datasets).
 
 ## Documentation
 
@@ -95,7 +95,7 @@ OPENAI_API_KEY=sk-3fa1... fuzzyai fuzz -m openai/gpt-3.5-turbo -a man -a tax -t 
 
 ### Attack prompts in prompts.txt utilizing the ArtPrompt attack, using Claude 3.5 over Anthropic
 ```bash
-ANTHROPIC_API_KEY=deadbeef... fuzzyai fuzz -m anthropic/claude-3-5-sonnet-20240620 -a art -T resources/adv_prompts.txt -e blacklisted_words="bomb,garbage,acid,ugly,self-harm,kill your"
+ANTHROPIC_API_KEY=deadbeef... fuzzyai fuzz -m anthropic/claude-3-5-sonnet-20240620 -a art -T src/fuzzyai/resources/adv_prompts.txt -e blacklisted_words="bomb,garbage,acid,ugly,self-harm,kill your"
 ```
 
 --- 
@@ -117,7 +117,7 @@ OPENAI_API_KEYT=sk-3fa1... fuzzyai fuzz -a def -x openai/gpt-4 -e classifier_mod
   Configures the fuzzer to use the `gpt-4` model for classifying outputs. This helps determine whether responses meet specific criteria, such as detecting harmful or unwanted content.
 
 - **`-m rest/http.raw`**:  
-  Uses the REST provider to attack an API endpoint. The raw HTTP request is parsed from the file `http.raw`. (Refer to the [documentation or example](./resources/http.raw) for details on the file structure.)
+  Uses the REST provider to attack an API endpoint. The raw HTTP request is parsed from the file `http.raw`. (Refer to the [documentation or example](./src/fuzzyai/resources/http.raw) for details on the file structure.)
 
 - **`-e host=localhost -e port=8000 -e scheme=https`**:  
   Configures the REST provider with the following API endpoint details:

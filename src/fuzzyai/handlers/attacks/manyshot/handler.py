@@ -1,5 +1,6 @@
 import logging
 import random
+from importlib import resources
 from typing import Any, Optional, Tuple, Type
 
 import pandas as pd
@@ -37,8 +38,8 @@ class ManyShotAttackHandler(BaseAttackTechniqueHandler[ManyShotAttackHandlerExtr
         return ManyShotAttackHandlerExtraParams
     
     def _load_qa_dataset(self) -> None:
-        dataset_path = "resources/llama2-uncensored-prompt-response-t0.jsonl"
-        dataset = pd.read_json(dataset_path, lines=True)
+        with resources.open_text("fuzzyai", "resources/llama2-uncensored-prompt-response-t0.jsonl") as f:
+            dataset = pd.read_json(f, lines=True)
         # Extract 'prompt' and 'response' from the dataset
         self._prompts_and_responses = dataset[['prompt', 'response']].values.tolist()
 

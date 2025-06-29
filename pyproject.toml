@@ -53,6 +53,12 @@ pythonpath = [
 [tool.poetry.scripts]
 fuzzyai = "fuzzyai.cli:main"
 
+[tool.setuptools.packages.find]
+where = ["src"]
+
+[tool.setuptools.package-data]
+fuzzyai = ["../resources/*"]
+
 [build-system]
 requires = ["setuptools>=40.9.0", "wheel", "poetry-core>=1.0.0"]
 build-backend = "poetry.core.masonry.api"
