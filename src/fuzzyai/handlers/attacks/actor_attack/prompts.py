@@ -1,5 +1,3 @@
-
-
 BEHAVIOR_EXTRACTION_PROMPT = """
 you will receive a prompt and you need to tell me what is the main behavior in it (no need to answer the prompt),
 examples - 
