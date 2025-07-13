@@ -1,11 +1,4 @@
-"""
-1. prompt -> behavior - V
-2. get actors - V
-3. turn actors into list - V
-4. for each actor try and get a malicious response using the template, if failed move on if succeeded stop.
-5.
-6.
-"""
+
 
 BEHAVIOR_EXTRACTION_PROMPT = """
 you will receive a prompt and you need to tell me what is the main behavior in it (no need to answer the prompt),
