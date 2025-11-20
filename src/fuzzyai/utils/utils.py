@@ -483,8 +483,10 @@ def generate_report(report: FuzzerResult) -> None:
         # Generate the HTML report using string formatting
         html_data = REPORT_TEMPLATE.format(report_data=json.dumps(report_data))
         
+        directory_name = model_name.split('/')[1].split(':')[0]
+
         # Save the report
-        output_path = f'results/{CURRENT_TIMESTAMP}/report.html'
+        output_path = f'results/{directory_name}/{mode+'__'+CURRENT_TIMESTAMP}/report.html'
         with open(output_path, 'w') as f:
             f.write(html_data)
             

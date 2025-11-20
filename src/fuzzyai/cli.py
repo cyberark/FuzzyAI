@@ -169,18 +169,27 @@ async def run_fuzzer(args: argparse.Namespace) -> None:
         await fuzzer.cleanup()
         return
 
-    await aiofiles.os.makedirs(f'results/{CURRENT_TIMESTAMP}', exist_ok=True)
+    if isinstance(args.model, (list, set)) and args.model:
+        model_str = next(iter(args.model))  
+    else:
+        model_str = str(args.model)
+
+    model_name = model_str.split("/")[-1]
+    
+    folder = f'results/{model_name}/{attack_mode+'__'+CURRENT_TIMESTAMP}'
+
+    await aiofiles.os.makedirs(folder, exist_ok=True)
 
     if report.attacking_techniques and any(atp.total_prompts_count > 0 for atp in report.attacking_techniques):
         if raw_results:
-            logger.info(f"Dumping raw results to results/{CURRENT_TIMESTAMP}/raw.jsonl")
-            async with aiofiles.open(f"results/{CURRENT_TIMESTAMP}/raw.jsonl", 'w', encoding="utf-8") as f:
+            logger.info(f"Dumping raw results to {folder}/raw.jsonl")
+            async with aiofiles.open(f"{folder}/raw.jsonl", 'w', encoding="utf-8") as f:
                 for raw_result in raw_results:    
                     await f.write(raw_result.model_dump_json())
 
         if report:
-            logger.info(f"Dumping results to results/{CURRENT_TIMESTAMP}/report.json")
-            async with aiofiles.open(f"results/{CURRENT_TIMESTAMP}/report.json", 'w', encoding="utf-8") as f:
+            logger.info(f"Dumping results to {folder}/report.json")
+            async with aiofiles.open(f"{folder}/report.json", 'w', encoding="utf-8") as f:
                 await f.write(report.model_dump_json())
             
             generate_report(report)
