@@ -15,7 +15,7 @@
    <a href="https://github.com/cyberark/fuzzyai/blob/master/LICENSE" >
       <img alt="GitHub License" src="https://img.shields.io/github/license/cyberark/fuzzyai">
    </a>
-   <a href="https://discord.gg/Zt297RAK">
+   <a href="https://discord.gg/ewQjdx2V">
       <img alt="Discord" src="https://img.shields.io/discord/1330486843938177157">
    </a>
    <br/><br/>
