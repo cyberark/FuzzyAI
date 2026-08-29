@@ -17,6 +17,7 @@ aiofiles = "^23.2.1"
 aiohttp = {version = "^3.9.1", extras = ["speedups"]}
 transformers = "4.51.3"
 sentence-transformers = "^2.6.1"
+safetensors = "<0.5.0"
 fschat = "^0.2.36"
 pygad = "^3.3.1"
 backoff = "^2.2.1"
